@@ -14,12 +14,12 @@ from rest_framework import status, filters
 from rest_framework import generics
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import get_object_or_404, ListAPIView
-from rest_framework.pagination import PageNumberPagination
+from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.utils import json
 from rest_framework.views import APIView
-from api._serializer import UserSerializer, PostSerializer, UserSearchSerializer
+from api._serializer import PrivateUserSerializer, PostSerializer, UserSearchSerializer, PublicUserSerializer
 # from api.customschema import auto_dict, login_user_response
 
 from first import settings
@@ -29,13 +29,15 @@ from post.models import CustomUser, Post
 # from drf_yasg.utils import swagger_auto_schema
 
 
-class CreateUser(generics.CreateAPIView):
+class ListCreateUser(generics.ListCreateAPIView):
     '''
     '''
     # این دو کلاس به صورت پیش فرش در فایل settings.py تعریف شده است
     # authentication_classes = ()
     # permission_classes = ()
-    serializer_class = UserSerializer
+    serializer_class = PublicUserSerializer
+    queryset = CustomUser.objects.all()
+    pagination_class = LimitOffsetPagination
 
     def create(self, request, *args, **kwargs):
         '''
@@ -54,7 +56,7 @@ class CreateUser(generics.CreateAPIView):
 
         # username validate
         if username:
-            username=username.strip()
+            username = username.strip()
             try:
                 user = CustomUser.objects.get(username=username)
                 return Response(data={'username': 'نام کاربری تکراری است'}, status=status.HTTP_200_OK)
@@ -64,7 +66,7 @@ class CreateUser(generics.CreateAPIView):
             return Response(data={'username': 'نام کاربری الزامی است'}, status=status.HTTP_400_BAD_REQUEST)
 
         # phone validate
-        if phone and (not re.match('^09[0-9]{9}$', phone)) :
+        if phone and (not re.match('^09[0-9]{9}$', phone)):
             return Response(data={'phone': 'شماره تلفن صحیح نمی باشد'}, status=status.HTTP_400_BAD_REQUEST)
 
         # email validate
@@ -103,12 +105,11 @@ class CreateUser(generics.CreateAPIView):
         except ValidationError as msg:
             return Response({'password': msg}, status=status.HTTP_400_BAD_REQUEST)
 
-
         try:
             user.email = email
             # ارسال ایمیل برای تایید آدرس ایمیل
             # اول ایمیل فرستاده شود، اگر فرستاده نشد کاربر ثبت نشود
-            #SendMail.send(user=user, mail_type='verify')
+            # SendMail.send(user=user, mail_type='verify')
             user.last_date_sent_mail = datetime.now()
             # برای اینکه مقار null در دیتا بیس بگیرد
 
@@ -126,10 +127,10 @@ class CreateUser(generics.CreateAPIView):
 
 #
 # class CreateUser(generics.CreateAPIView):
-#     serializer_class = UserSerializer
+#     serializer_class = PrivateUserSerializer
 #
 #     def create(self, request, *args, **kwargs):
-#         user_serialize = UserSerializer(data=request.data)
+#         user_serialize = PrivateUserSerializer(data=request.data)
 #         if user_serialize.is_valid():
 #             new_user = CustomUser(request.data)
 #             new_user.email = ''
@@ -144,7 +145,7 @@ class LoginUser(APIView):
     '''
     نام کاربری و رمز عبور ارسال شده، توکن مربوطه دریافت می شود
     '''
-    serializer_class = UserSerializer
+    serializer_class = PrivateUserSerializer
 
     # @swagger_auto_schema(responses=login_user_response, )
     def post(self, request):
@@ -162,7 +163,7 @@ class LoginUser(APIView):
 
 
 class ProfileUser(APIView):
-    serializer_class = UserSerializer
+    serializer_class = PrivateUserSerializer
     # دسترسی توسط توکن
     permission_classes = (IsAuthenticated,)
 
@@ -178,7 +179,7 @@ class ProfileUser(APIView):
             elif update == 'password':
                 return self.update_password(request, user)
             else:
-                return Response({'user': UserSerializer(user).data}, status=status.HTTP_200_OK)
+                return Response({'user': PrivateUserSerializer(user).data}, status=status.HTTP_200_OK)
         except:
             # خطای غیر قابل پیش بینی
             return Response(data={'update': 'please send update field'}, status=status.HTTP_400_BAD_REQUEST)
@@ -243,12 +244,12 @@ class ProfileUser(APIView):
             # فعال کند، ایمیل دوم باقی خواهد ماند.
             # ایمیل مقداری پر و خالی می تواند داشته باشد
             user.email = email
-            SendMail.send(user, mail_type='veify')
+            # SendMail.send(user, mail_type='veify')
             # ذخیره ی مقدار null در دیتابیس
             user.email = None
             user.last_date_sent_mail = datetime.now()
         user.save()
-        return Response(data={'data': 'updated', "user": UserSerializer(user).data}, status=status.HTTP_200_OK)
+        return Response(data={'data': 'updated', "user": PrivateUserSerializer(user).data}, status=status.HTTP_200_OK)
 
     def update_password(self, request, user):
         try:
@@ -268,7 +269,8 @@ class AllPostList(generics.ListAPIView):
     '''
     serializer_class = PostSerializer
     queryset = Post.objects.all().order_by('id')
-    # pagination_class = None
+    pagination_class = LimitOffsetPagination
+
 
 class Posts(APIView):
     '''

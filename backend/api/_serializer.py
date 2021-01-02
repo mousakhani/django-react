@@ -33,7 +33,13 @@ class UserSearchSerializer(serializers.ModelSerializer):
 #         fields = ['id', 'username', 'first_name', 'last_name']
 
 
-class UserSerializer(serializers.ModelSerializer):
+class PublicUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'username', 'first_name', 'last_name']
+
+
+class PrivateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         exclude = ['is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions']
