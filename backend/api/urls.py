@@ -20,7 +20,6 @@ urlpatterns = [
     # -----------------------------------------------------------------------
 
     path('test/', UploadTest.as_view()),
-
     path('users/', ListCreateUser.as_view(), name='create_user'),
     # post لاگین کردن
     # put اپدیت کردن پروفایل
@@ -36,6 +35,10 @@ urlpatterns = [
     path('reset-password/<decoded_str>/', ResetPassword.as_view()),
     # لینک ارسالی به کاربر برای تایید ایمیل
     path('mail-verify/<decoded_str>/', VerifyMail.as_view()),
+    # post لاگین کردن
+    # put اپدیت کردن پروفایل
+    path('users/login/', LoginUser.as_view(), name='user_login'),
+    path('users/profile/', ProfileUser.as_view(), name='user_login'),
 
     # ------------------------------------------------------------------------
 

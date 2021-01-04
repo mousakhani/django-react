@@ -37,14 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'drf_yasg',
-
     # داکیومنت سازی ای پی ای ها
     # 'rest_framework_swagger',
 
-    # ای پی ای
+    #داکیومنت سازی ای پی ای ها
+    'drf_yasg',
+    #ای پی ای
     'rest_framework',
-    # احراز هویت
+    #احراز هویت
     'rest_framework.authtoken',
 
     # داکیومنت سازی ای پی ای ها
@@ -59,11 +59,6 @@ INSTALLED_APPS = [
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 2,
-
-    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
-
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',

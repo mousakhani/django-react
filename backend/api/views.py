@@ -269,7 +269,6 @@ class AllPostList(generics.ListAPIView):
     pagination_class = LimitOffsetPagination
 
 
-
 class Posts(APIView):
     '''
     کار با پستهای یوزر خاص

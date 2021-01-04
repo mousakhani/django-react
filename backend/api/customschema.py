@@ -4,6 +4,7 @@
 # from post.models import CustomUser
 #
 #
+
 # class UserDrfSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = CustomUser
