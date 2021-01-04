@@ -56,7 +56,6 @@
         },
         methods:{
             logout(){
-                console.log('g')
                 store.dispatch('login/logout').then(()=>{
 
                 })

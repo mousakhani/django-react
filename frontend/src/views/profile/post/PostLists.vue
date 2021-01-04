@@ -10,7 +10,7 @@
             <input class="input--style-4" label="جستجو" type="text" @input="input">
            <div class="row justify-content-center mt-5">
                  <div class="col-lg-12">
-                    <PostList :posts="posts"></PostList>
+                    <PostList :results="posts"></PostList>
                 </div>
             </div>
         </div>

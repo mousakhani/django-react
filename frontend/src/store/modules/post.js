@@ -31,9 +31,8 @@ export const actions= {
     deletePost({commit},id){
         return Service.deletePost(id)
             .then(() => {
-                console.log('eeeeee')
-
                 commit('DELETE_POST', id)
+
             })
             .catch(error => {
                 console.log(error)
@@ -43,6 +42,7 @@ export const actions= {
     getPosts ({ commit }) {
 
             return Service.getPosts().then((res)=>{
+                console.log('userPost',res.data)
                 commit('SET_POSTS',res.data)
             })
 

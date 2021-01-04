@@ -64,6 +64,23 @@
                                 </div>
 
                             </div>
+
+                            <div class="row ">
+                                <div class="col-lg-6 text-right">
+                                    <div class="input-container">
+                                        <label class="label">عکس</label>
+                                        <input type="file" @change="onFileChanged" style="display:none" ref="fileInput" accept="image/*">
+                                        <button class="primary btn-img btn--radius-2 " @click.prevent="onPickFile">انتخاب عکس</button>
+                                        <div class="mt-2" v-if="imageUrl">
+                                            <img  :src="imageUrl" height="150">
+                                            <span class="removeImg" @click=" removeImgPreview">
+                                                <i class="fas fa-times"></i>
+                                            </span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
                              <div v-if="error" class="text-right error">
                                  {{error}}
                              </div>
@@ -107,10 +124,21 @@
         },
         data(){
             return{
-                user:{},
+                user:{
+                    first_name:'',
+                    last_name:'',
+                    username:'',
+                    password:'',
+                    bio:'',
+                    email:'',
+                    adres:'',
+                    avatar:''
+                },
                 error:'',
                 buttonClick:false,
-                passwordFieldType:'password'
+                passwordFieldType:'password',
+                imageUrl:'',
+                formData : new FormData(),
 
             }
         },
@@ -123,6 +151,30 @@
             }
         },
         methods:{
+            onFileChanged (event) {
+                this.formData.append('avatar', '')
+                this.user.avatar=null
+                const file = event.target.files[0]
+                let filename=file.name
+                if(filename.lastIndexOf('.')<=0){
+                    this.error='فرمت مناسب انتخاب کنید'
+                }
+                this.imageUrl = URL.createObjectURL(file)
+                this.formData.append('avatar', file, file.name)
+
+
+
+            },
+            onPickFile(){
+                this.$refs.fileInput.click()
+
+            },
+            removeImgPreview(){
+                this.imageUrl=null
+                this.formData.delete('avatar');
+
+            },
+
             showText(){
             this.passwordFieldType='text'
             },
@@ -133,7 +185,19 @@
             this.$v.$touch()
             if(!this.$v.$invalid){
             this.buttonClick=true;
-            Service.createUser(this.user).then((res)=>{
+                this.formData.append('update', 'data')
+                this.formData.append('last_name',this.user.last_name)
+                this.formData.append('username',this.user.username)
+                this.formData.append('password',this.user.password)
+                this.formData.append('first_name',this.user.first_name)
+                this.formData.append('email',this.user.email)
+                this.formData.append('bio',this.user.bio)
+                this.formData.append('adres',this.user.adres)
+                if(this.user.phone!=null)
+                {
+                    this.formData.append('phone',this.user.phone)
+                }
+            Service.createUser(this.formData).then((res)=>{
                 console.log('register success',res)
                 if (res.status === 200){
                     this.error='ثبت نام با موفقیت انجام شد'
@@ -198,12 +262,32 @@
 </script>
 
 <style scoped>
+    @media(max-width:800px){
+        .input-container {
+            width: 100%!important;
+        }
+    }
 .input-container{
     width:45%;
 }
-    .eye-password{
+.eye-password{
         position: absolute;
         top: 46px;
         left: 11px;
+    }
+.btn-img{
+    padding:5px;
+    color:white!important;
+    background: linear-gradient(315deg, rgb(148 18 82) 40%, rgba(151,8,150,1) 100%)!important;
+}
+.btn-img:focus{
+    border:0;
+    outline:0
+}
+
+    .removeImg{
+        position: absolute;
+        color: red;
+
     }
 </style>

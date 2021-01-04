@@ -1,7 +1,7 @@
 <template>
     <div class="container">
-        <div class="row">
-            <PostPreview v-for="post in posts"
+        <div class="row" v-if="results.length>=1">
+            <PostPreview   v-for="post in results"  @delete="removechild"
                         :user="post.user" :key="post.id" :title="post.title" :content="post.content" :id="post.id.toString()" class="col-lg-4 mt-2 text-right"></PostPreview>
 
         </div>
@@ -14,14 +14,21 @@
     export default {
         name: "PostList",
         props:{
-         posts:{
+         results:{
              type:Array,
-             required: true
+             required: true,
+             default: () => ([])
          }
         },
         components: {
             PostPreview
         },
+        methods:{
+            removechild(id){
+               let index= this.results.findIndex(item=>item.id==id)
+                this.results.splice(index,1)
+            }
+        }
     }
 </script>
 

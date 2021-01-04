@@ -29,7 +29,7 @@
 
                             <div class="col-lg-6">
                                 <div class="input-container">
-                                    <BaseInput type="text" inputClass="input--style-4" label="شماره تلفن" v-model="user.phone" ></BaseInput>
+                                    <BaseInput type="text" inputClass="input--style-4" label="شماره موبایل" v-model="user.phone" ></BaseInput>
                                 </div>
                             </div>
 
@@ -53,7 +53,7 @@
                             </div>
 
                         </div>
-                        <div class="row ">
+                        <div class="row mb-3">
                             <div class="col-lg-6">
                                 <div class="input-container">
                                     <label class="label">عکس</label>
@@ -61,14 +61,22 @@
                                     <button class="primary btn-img btn--radius-2 " @click.prevent="onPickFile">انتخاب عکس</button>
                                    <div class="mt-2" v-if="user.avatar">
                                        <img  :src="baseUrl+user.avatar" height="150">
+                                       <span class="removeImg" @click="removeImg">
+                                                <i class="fas fa-times"></i>
+                                            </span>
                                    </div>
                                     <div class="mt-2" v-if="imageUrl">
                                         <img  :src="imageUrl" height="150">
+                                        <span class="removeImg" @click=" removeImgPreview">
+                                                <i class="fas fa-times"></i>
+                                            </span>
                                     </div>
 
                                 </div>
                             </div>
                             </div>
+
+
                         <div v-if="error" class="text-right error mt-4 mr-3">
                             {{error}}
                         </div>
@@ -161,27 +169,35 @@
             },
             setInfUser(){
                 let user=this.userInfo
-                this.user.last_name=user.last_name
-                this.user.first_name=user.first_name
-                this.user.email=user.email
-                this.user.bio=user.bio
-                this.user.adres=user.adres
-                this.user.phone=user.phone
-                this.user.avatar=user.avatar
+                this.user.last_name=user.last_name=='null'?'':user.last_name
+                this.user.first_name=user.first_name=='null'?'':user.first_name
+                this.user.email=user.email=='null'?'':user.email
+                this.user.bio=user.bio=='null'?'':user.bio
+                this.user.adres=user.adres=='null'?'':user.adres
+                this.user.phone=user.phone=='null'?'':user.phone
+                if( user.avatar.lastIndexOf('.')<=0){
+                    this.user.avatar=''
+                }
+                else{
+                    this.user.avatar=user.avatar
+                }
+
+
 
             },
             update(){
                 this.$v.$touch()
                 if(!this.$v.$invalid){
                     this.formData.append('update', 'data')
-                    this.formData.append('last_name',this.user.last_name)
-                    this.formData.append('first_name',this.user.first_name)
-                    this.formData.append('email',this.user.email)
-                    this.formData.append('bio',this.user.bio)
-                    this.formData.append('adres',this.user.adres)
+                    this.user.last_name==''?this.formData.set('last_name',null): this.formData.append('last_name',this.user.last_name)
+                    this.user.first_name==''?this.formData.set('first_name',null): this.formData.append('first_name',this.user.first_name)
+                    this.user.email==''?this.formData.set('email',null): this.formData.append('email',this.user.email)
+                    this.user.bio==''?this.formData.set('bio',null): this.formData.append('bio',this.user.bio)
+                    this.user.adres==''?this.formData.set('adres',null): this.formData.append('adres',this.user.adres)
+
                     if(this.user.phone!=null)
                     {
-                        this.formData.append('phone',this.user.phone)
+                        this.user.phone==''?this.formData.set('phone',null): this.formData.append('phone',this.user.phone)
                     }
                     this.isLoading=true;
                     store.dispatch('login/updateUser',this.formData).then((res)=>{
@@ -214,14 +230,14 @@
                 this.$refs.fileInput.click()
 
             },
-            // removeImgPreview(){
-            //     this.imageUrl=null
-            //     this.formData.append('avatar', '')
-            // },
-            // removeImg(){
-            //     this.user.avatar=null
-            //     this.formData.append('avatar', null)
-            // }
+            removeImgPreview(){
+                this.imageUrl=null
+                this.formData.append('avatar',null);
+            },
+            removeImg(){
+                this.user.avatar=null
+                this.formData.append('avatar',null);
+            }
 
         }
     }
@@ -237,9 +253,11 @@
     border:0;
     outline:0
 }
-    .remove{
-        color: red;
-        position: absolute;
-        cursor:pointer;
-    }
+.removeImg{
+    position: absolute;
+    color: red;
+    cursor:pointer;
+    top:60px;
+
+}
 </style>

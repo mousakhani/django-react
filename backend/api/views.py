@@ -21,11 +21,8 @@ from rest_framework.utils import json
 from rest_framework.views import APIView
 from api._serializer import PrivateUserSerializer, PostSerializer, UserSearchSerializer, PublicUserSerializer
 # from api.customschema import auto_dict, login_user_response
-
 from first import settings
 from post.models import CustomUser, Post
-
-
 # from drf_yasg.utils import swagger_auto_schema
 
 
@@ -270,6 +267,7 @@ class AllPostList(generics.ListAPIView):
     serializer_class = PostSerializer
     queryset = Post.objects.all().order_by('id')
     pagination_class = LimitOffsetPagination
+
 
 
 class Posts(APIView):

@@ -1885,8 +1885,19 @@ li .payment:after {
 		padding: 0
 	}
 }
-
-
+.pagination{
+	justify-content: center!important;
+	margin-top:50px;
+}
+.VuePagination__count{
+	display:none!important;
+}
+.page-item.active .page-link {
+	z-index: 1;
+	color: #fff!important;
+	background-color: #705284!important;
+	border-color: #311d46!important;
+}
 
 
 

@@ -11,6 +11,11 @@ Vue.use(Vuelidate)
 Vue.component('BaseInput', BaseInput)
 Vue.component('BaseButton',BaseButton)
 Vue.component('Loading', Loading)
+import Pagination from 'vue-pagination-2';
+import InfiniteLoading from 'vue-infinite-loading'
+
+Vue.component('infinite-loading', InfiniteLoading)
+Vue.component('pagination', Pagination);
 import BaseInput from '@/components/BaseInput'
 import BaseButton from '@/components/BaseButton'
 import './assets/css/bootstrap.min.css';
@@ -42,7 +47,6 @@ new Vue({
             response=>response,
             error=>{
                 if(error.response.status===401){
-                    console.log('ffjjf')
                     console.log(error)
                     this.$store.dispatch('login/logout')
                 }

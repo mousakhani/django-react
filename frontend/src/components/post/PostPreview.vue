@@ -49,19 +49,23 @@
         props:{
             id: {
                 type: String,
-                required: true
+                required: true,
+                default: () => ('')
             },
             title:{
                 type: String,
-                required: true
+                required: true,
+                default: () => ('')
             },
             content:{
                 type: String,
-                required: true
+                required: true,
+                default: () => ('')
             },
             user:{
                 type: Object,
-                required: true
+                required: true,
+                default: () => ({})
             },
 
 
@@ -74,8 +78,11 @@
                 this.isLoading=true
                 store.dispatch('post/deletePost',id).then(()=>{
                 this.isLoading=false
+                this.showModal=false
+                    this.$emit("delete",id);
 
-                }).catch(()=>{
+                }).catch((e)=>{
+                    console.log(e.response)
                     this.isLoading=false
                     this.error='مشکلی در دریافت اطلاعات رخ داده است'
                 })

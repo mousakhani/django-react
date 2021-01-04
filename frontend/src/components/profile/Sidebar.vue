@@ -4,11 +4,13 @@
             <div class="dashCard">
                 <ul>
                     <li class="first-card">
+
                         <div class="c-profile__user-avatar" v-if="userInfo.avatar" style="display: inline-grid;">
-                            <img  :src="baseUrl+userInfo.avatar" height="150">
+                            <img v-if="userInfo.avatar.lastIndexOf('.')>=0" :src="baseUrl+userInfo.avatar" height="150">
+                            <img v-else src="@/assets/images/default.jpg" height="150">
                         </div>
                         <div class="c-profile__user-avatar" v-else style="display: inline-grid;">
-                            <img  :src="baseUrl+'/media/images/default.jpg'" height="150">
+                            <img  src="@/assets/images/default.jpg" height="150">
                         </div>
                         <p class="firstname d-inline-block">{{username}}</p></li>
                 </ul>
@@ -67,7 +69,8 @@
 
         },
         mounted(){
-            this.currentPage
+            this.currentPage;
+
         },
         computed:{
             ...mapGetters('login', ['username','userInfo']),

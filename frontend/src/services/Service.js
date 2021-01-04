@@ -43,9 +43,7 @@ export default {
         })
 
     },
-    // getProducts(perPage, page) {
-    //     return apiClient.get('/products?_limit='+ perPage + '&_page=' + page)
-    // },
+
     createPost(post){
         return apiClient.post('/posts/user/',post)
     },
@@ -71,9 +69,9 @@ export default {
 
         )
     },
-    fetchAllPosts(){
-        return  apiClient.get('/posts/')
-    }
+    fetchAllPosts(perPage, page) {
+        return apiClient.get('/posts?limit='+ perPage + '&offset=' + page*perPage)
+    },
 
 
 }
