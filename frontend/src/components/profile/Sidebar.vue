@@ -12,7 +12,7 @@
                         <div class="c-profile__user-avatar" v-else style="display: inline-grid;">
                             <img  src="@/assets/images/default.jpg" height="150">
                         </div>
-                        <p class="firstname d-inline-block">{{username}}</p></li>
+                        <p class="firstname d-inline-block">{{userInfo.username}}</p></li>
                 </ul>
                 <div class="row">
                     <div class=" half col-6" >
@@ -73,7 +73,7 @@
 
         },
         computed:{
-            ...mapGetters('login', ['username','userInfo']),
+            ...mapGetters('login', ['userInfo']),
             currentPage () {
                 return this.$route.path
             }

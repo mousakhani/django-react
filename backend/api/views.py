@@ -16,6 +16,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.generics import get_object_or_404, ListAPIView
 from rest_framework.pagination import LimitOffsetPagination
+
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -26,6 +27,7 @@ from post.models import CustomUser, Post
 
 
 class ListCreateUser(generics.ListCreateAPIView):
+
     serializer_class = PublicUserSerializer
     queryset = CustomUser.objects.all()
     pagination_class = LimitOffsetPagination

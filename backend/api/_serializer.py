@@ -39,7 +39,7 @@ class PostSerializer(serializers.ModelSerializer):
             model = CustomUser
             fields = ('id', 'username',)
 
-    # فیلد یوزر دیتای خود رو از کلاس بالا می گیرد
+    #فیلد یوزر دیتای خود رو از کلاس بالا می گیرد
     user = UserDetails()
 
     # fields = ('id', 'user__username', 'title', 'content')

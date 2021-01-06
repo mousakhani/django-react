@@ -73,6 +73,7 @@ const router = new Router({
                     component: ProfileEdit,
                     props:true,
                 },
+
                 {
                     path: 'user/:id',
                     name: 'profileUser',
@@ -108,6 +109,12 @@ const router = new Router({
 
             ]
 
+        },
+        {
+            path: '/profile/user/:id',
+            name: 'profileUser',
+            component: ProfileUser,
+            props:true,
         },
 
         {
