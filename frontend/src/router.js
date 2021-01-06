@@ -12,6 +12,7 @@ import PostCreate from './views/profile/post/PostCreate.vue'
 import PostLists from './views/profile/post/PostLists.vue'
 import PostEdit from './views/profile/post/PostEdit.vue'
 import Profile from './views/profile/Profile.vue'
+import ProfileUser from './views/profile/ProfileUser.vue'
 //
 // import Loading from 'vue-loading-overlay';
 import NotFound from './views/NotFound'
@@ -70,6 +71,12 @@ const router = new Router({
                     path: 'edit',
                     name: 'profileEdit',
                     component: ProfileEdit,
+                    props:true,
+                },
+                {
+                    path: 'user/:id',
+                    name: 'profileUser',
+                    component: ProfileUser,
                     props:true,
                 },
                 {

@@ -175,7 +175,7 @@
                 this.user.bio=user.bio=='null'?'':user.bio
                 this.user.adres=user.adres=='null'?'':user.adres
                 this.user.phone=user.phone=='null'?'':user.phone
-                if( user.avatar.lastIndexOf('.')<=0){
+                if( user.avatar && user.avatar.lastIndexOf('.')<=0){
                     this.user.avatar=''
                 }
                 else{

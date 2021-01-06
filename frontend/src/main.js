@@ -14,6 +14,7 @@ Vue.component('Loading', Loading)
 import Pagination from 'vue-pagination-2';
 import InfiniteLoading from 'vue-infinite-loading'
 
+
 Vue.component('infinite-loading', InfiniteLoading)
 Vue.component('pagination', Pagination);
 import BaseInput from '@/components/BaseInput'

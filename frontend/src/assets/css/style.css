@@ -1898,8 +1898,28 @@ li .payment:after {
 	background-color: #705284!important;
 	border-color: #311d46!important;
 }
+.multiselect{
+	text-align:right!important;
+}
+.text-field{
+	width:90%!important;
+}
 
+.multiselect__tags {
+	border:0!important;
+}
+.multiselect__select:before{
+	display:none!important;
+}
+.multiselect__option--highlight {
+	background: #745785!important;
+	outline: none;
+	color: #fff;
+}
+.multiselect__content-wrapper{
+	max-height:200px!important;
+	z-index:500;
+}
 
-
-
-
+position: relative;
+top: -3px;

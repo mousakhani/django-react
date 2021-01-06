@@ -7,7 +7,25 @@
 
                         <div class="custom-search">
                             <div class="text-field">
-                                <input type="text" value="" name="s" id="search" placeholder="نام کاربر مورد نظر را وارد نمایید"></div>
+                                <multiselect @open="asyncFind" placeholder="نام کاربر مورد نظر خود را وارد کنید"
+                                             v-model="user"
+                                             :options="options"
+                                             :selectLabel=" meh"
+                                             :hide-selected="true"
+                                             selectedLabel="انتخاب شده"
+                                             deselectLabel="حذف"
+                                             label="username"
+                                             track-by="name"
+                                             openDirection="bottom"
+                                             :showNoOptions="false"
+                                             :optionHeight="7"
+
+
+                                >
+                                    <template slot="noResult">گزینه‌ای یافت نشد</template>
+
+                                </multiselect>
+                               </div>
                             <div class="search-top">
                                 <i class="fas fa-search"></i>
                             </div>
@@ -20,8 +38,15 @@
                 </div>
             </div>
         </div>
-        <div class="container">
+        <div class="container latest-top">
             <div class="row justify-content-center mt-5">
+                <div class="col-lg-12 text-center">
+                  <span class="latest">  آخرین مطالب</span>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row justify-content-center mt-5 posts-container">
                 <div class="col-lg-12" v-if="posts">
                     <PostList :results="posts.results"></PostList>
                     <infinite-loading
@@ -49,10 +74,11 @@
     import store from '@/store/store'
     import Service from '@/services/Service.js'
     import PostList from '@/components/post/PostList'
+    import Multiselect from 'vue-multiselect'
     export default {
         name: "Home",
         components: {
-            PostList
+            PostList, Multiselect
         },
         data(){
             return{
@@ -62,21 +88,26 @@
                     ]
                 },
                 deletedId:'',
-
-                perPage: 5,
+                meh:'',
+                user: null,
+                options: [
+                ],
+                perPage: 2,
                 eventsTotal:'',
-                currentPage:0
+                currentPage:0,
+                searchData:true,
+                searchValue:'',
             }
         },
         created(){
             if(this.loggedIn && !this.userInfo){
                 store.dispatch('login/getUser')
             }
-            this.getPosts()
+
 
         },
         mounted () {
-            window.scrollTo(0, 0)
+
         },
 
         computed: {
@@ -85,9 +116,13 @@
 
         },
         watch:{
-            currentPage:function(v1){
-                return v1
-            }
+            currentPage:function(value){
+                return value
+            },
+            user:function(value){
+                this.$router.push({ name: 'profileUser', params: { id: value.id } })
+            },
+
         },
         methods:{
             infiniteScroll($state) {
@@ -96,11 +131,10 @@
 
                         Service.fetchAllPosts(
                             this.perPage,
-                            this.currentPage,
+                            this.currentPage-1,
                         ).then((res)=>{
-                            console.log('reees',res)
+                            console.log('3333333333',res)
                             if (res.data.results.length > 1) {
-                                console.log('55',res.data.results)
                                 res.data.results.forEach((item) => this.posts.results.push(item))
                                 $state.loaded()
                             } else {
@@ -111,24 +145,13 @@
                 )
 
             },
-            getPosts()
-            {
-                Service.fetchAllPosts(
-                    this.perPage,
-                    this.currentPage-1,
-                ).then((res)=>{
-                    this.posts=res.data
-
-                })
 
 
-            },
             fetchAllPosts(currentPage){
                 Service.fetchAllPosts(
                     this.perPage,
                     currentPage-1,
                 ).then((res)=>{
-                    console.log('res',res)
                     this.posts=res.data
                     this.eventsTotal=res.data.count
                 })
@@ -140,12 +163,28 @@
                 else{
                     this.fetchAllPosts()
                 }
+            },
+            asyncFind () {
+                if(this.searchData==true)
+                {
+
+                    Service.getAll(
+                    ).then((res)=>{
+
+                        this.options=res.data
+                        this.searchData=false
+
+                    }).catch(()=>{
+
+                    })
+                }
+
             }
         }
 
     }
 </script>
-
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 <style scoped>
     .bg-slider{
         background-image:url('../assets/images/header-min.jpg');
@@ -176,7 +215,9 @@
         color:purple;
         font-size:25px;
         float:left;
+        width:10%;
     }
+
 
     .text-field{
         float:right;
@@ -185,6 +226,10 @@
     .no-more{
         color:white!important;
     }
+    .latest{
+        border-bottom: 2px solid purple;
+    }
+
 
 
 </style>

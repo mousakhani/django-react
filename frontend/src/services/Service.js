@@ -70,8 +70,16 @@ export default {
         )
     },
     fetchAllPosts(perPage, page) {
-        return apiClient.get('/posts?limit='+ perPage + '&offset=' + page*perPage)
+        console.log('pageeeee',page)
+        console.log('perPage',perPage)
+        return apiClient.get('/posts/?limit='+ perPage + '&offset=' + page*perPage)
     },
+    getAllusers(query){
+        return apiClient.get('/users/search/?username='+query+'&firstname=+'+query+'&lastname='+query)
+    },
+    getAll(){
+        return apiClient.get('/users/')
+    }
 
 
 }
