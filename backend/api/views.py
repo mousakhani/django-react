@@ -11,6 +11,7 @@ from django.template.loader import get_template
 import jwt
 from rest_framework import status, filters
 from rest_framework import generics
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.generics import get_object_or_404, ListAPIView
