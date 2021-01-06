@@ -1,11 +1,10 @@
 import re
 from datetime import timedelta, datetime
-
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.mail import send_mail
 from django.db import IntegrityError
 from django.db.models import Q
-from django.contrib.auth import authenticate, password_validation
+from django.contrib.auth import  password_validation
 from django.contrib.auth.models import update_last_login
 from django.core.validators import validate_email
 from django.template.loader import get_template
@@ -13,33 +12,24 @@ import jwt
 from rest_framework import status, filters
 from rest_framework import generics
 from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.generics import get_object_or_404, ListAPIView
-from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.utils import json
 from rest_framework.views import APIView
-from api._serializer import PrivateUserSerializer, PostSerializer, UserSearchSerializer, PublicUserSerializer
-# from api.customschema import auto_dict, login_user_response
+from api._serializer import PostSerializer, PublicUserSerializer, PrivateUserSerializer
 from first import settings
 from post.models import CustomUser, Post
-# from drf_yasg.utils import swagger_auto_schema
+
 
 
 class ListCreateUser(generics.ListCreateAPIView):
-    '''
-    '''
-    # این دو کلاس به صورت پیش فرش در فایل settings.py تعریف شده است
-    # authentication_classes = ()
-    # permission_classes = ()
     serializer_class = PublicUserSerializer
     queryset = CustomUser.objects.all()
     pagination_class = LimitOffsetPagination
 
     def create(self, request, *args, **kwargs):
-        '''
-        ایجاد کاربر جدید
-        '''
         data = request.data
         username = data.get('username')
         password = data.get('password')
@@ -121,42 +111,19 @@ class ListCreateUser(generics.ListCreateAPIView):
             return Response({'email': 'مشکلی در سرور ایجاد شده است. لطفا مجدد تلاش کنید و یا به پشتیبانی اطلاع دهید'},
                             status=status.HTTP_400_BAD_REQUEST)
 
-
-#
-# class CreateUser(generics.CreateAPIView):
-#     serializer_class = PrivateUserSerializer
-#
-#     def create(self, request, *args, **kwargs):
-#         user_serialize = PrivateUserSerializer(data=request.data)
-#         if user_serialize.is_valid():
-#             new_user = CustomUser(request.data)
-#             new_user.email = ''
-#             new_user.save()
-#             Token.objects.create(user=new_user)
-#             return Response({'register': 'Ok'}, status=status.HTTP_200_OK)
-#         else:
-#             return Response({'register': 'Fialed'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class LoginUser(APIView):
+class LoginUser(ObtainAuthToken):
     '''
     نام کاربری و رمز عبور ارسال شده، توکن مربوطه دریافت می شود
     '''
-    serializer_class = PrivateUserSerializer
 
-    # @swagger_auto_schema(responses=login_user_response, )
-    def post(self, request):
-        '''
-        ارسال نام کاربری و رمز عبور
-        '''
-        username = request.data.get('username')
-        password = request.data.get('password')
-        user = authenticate(username=username, password=password)
-        if user:
-            update_last_login(None, user)
-            return Response({'token': user.auth_token.key}, status=status.HTTP_200_OK)
-        else:
-            return Response({'error': 'نام کاربری یا رمز عبور اشتباه می باشد'}, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        update_last_login(None, user)
+        return Response({'token': token.key, }, status=200)
+
 
 
 class ProfileUser(APIView):
@@ -275,8 +242,6 @@ class Posts(APIView):
     '''
     permission_classes = (IsAuthenticated,)
 
-    # @swagger_auto_schema(operation_id='ID', operation_description='operation description',
-    #                      responses={200: 'verified', 404: 'Not found item'})
     def get(self, request, post_pk=None):
 
         objs = Post.objects.filter(user_id=request.user.id)
@@ -328,7 +293,7 @@ class Posts(APIView):
 
 
 class UserSearch(generics.ListAPIView):
-    serializer_class = UserSearchSerializer
+    serializer_class = PublicUserSerializer
 
     def get_queryset(self):
         username = self.request.GET.get('username') or False
@@ -491,3 +456,35 @@ class UploadTest(ListAPIView):
     serializer_class = PostSerializer
     filter_backends = (filters.BaseFilterBackend)
     filter_fields = ['title', ]
+
+#
+# class CreateUser(generics.CreateAPIView):
+#     serializer_class = PrivateUserSerializer
+#
+#     def create(self, request, *args, **kwargs):
+#         user_serialize = PrivateUserSerializer(data=request.data)
+#         if user_serialize.is_valid():
+#             new_user = CustomUser(request.data)
+#             new_user.email = ''
+#             new_user.save()
+#             Token.objects.create(user=new_user)
+#             return Response({'register': 'Ok'}, status=status.HTTP_200_OK)
+#         else:
+#             return Response({'register': 'Fialed'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# serializer_class = PrivateUserSerializer
+
+# @swagger_auto_schema(responses=login_user_response, )
+# def post(self, request):
+#     '''
+#     ارسال نام کاربری و رمز عبور
+#     '''
+#     username = request.data.get('username')
+#     password = request.data.get('password')
+#     user = authenticate(username=username, password=password)
+#     if user:
+#         update_last_login(None, user)
+#         return Response({'token': user.auth_token.key}, status=status.HTTP_200_OK)
+#     else:
+#         return Response({'error': 'نام کاربری یا رمز عبور اشتباه می باشد'}, status=status.HTTP_400_BAD_REQUEST)
